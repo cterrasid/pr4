@@ -119,6 +119,46 @@ action studentsLoadDataFromFile (
     end if;
 end action;
 
+{ Assign activity weight according to activity name and type}
+action activityTypeWeight (
+    in activity: tActivityName,
+    out activityType: tActivityType,
+    out activityWeight: real
+  )
+    activityType := CAA;
+    if activity = CAA1 then
+        activityWeight := CAA1_WEIGHT;
+    else
+        if activity = CAA2 then
+            activityWeight := CAA2_WEIGHT;
+        else
+            if activity = CAA3 then
+                activityWeight := CAA3_WEIGHT;
+            else
+                if activity = CAA4 then
+                    activityWeight := CAA4_WEIGHT;
+                else
+                    activityType := PR;
+                    if activity = PR1 then
+                        activityWeight := PR1_WEIGHT;
+                    else
+                        if activity = PR2 then
+                            activityWeight := PR2_WEIGHT;
+                        else
+                            activityWeight := PR3_WEIGHT;
+                        end if
+                    end if
+                end if
+            end if
+        end if
+    end if
+end action
+
+{ Check for all submitter PR activities }
+function allSubmittedPr (nSubmittedPr: integer): boolean
+    return nSubmittedPr = NUM_PR_ACTIVITIES;
+end function
+
 algorithm UOCSubjectGrades
     var
         studentsTable: tStudentsTable;
