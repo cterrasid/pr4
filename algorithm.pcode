@@ -1,0 +1,139 @@
+const
+    MAX_STUDENTS: integer = 20;      {Max. number of students}
+    NUM_ACTIVITIES: integer = 7;     {Max. number of activities of the subject}
+    NUM_CAA_ACTIVITIES: integer = 4; {Number of CAA activities}
+    NUM_PR_ACTIVITIES: integer = 3;  {Number of PR activities}
+
+    MIN_C_MINUS: real = 3.0;         {Minimum mark for grade C-}
+    MIN_C_PLUS: real = 5.0;          {Minimum mark for grade C+}
+    MIN_B: real = 7.0;               {Minimum mark for grade B}
+    MIN_A: real = 9.0;               {Minimum mark for grade A}
+
+    CAA1_WEIGHT: integer = 10;       {Percent weight of CAA1 in CAA grade}
+    CAA2_WEIGHT: integer = 20;       {Percent weight of CAA2 in CAA grade}
+    CAA3_WEIGHT: integer = 30;       {Percent weight of CAA3 in CAA grade}
+    CAA4_WEIGHT: integer = 40;       {Percent weight of CAA4 in CAA grade}
+    PR1_WEIGHT: integer = 20;        {Percent weight of PR1 in PR grade}
+    PR2_WEIGHT: integer = 30;        {Percent weight of PR2 in PR grade}
+    PR3_WEIGHT: integer = 50;        {Percent weight of PR3 in PR grade}
+
+    { TODO: Agregar constantes necesarias...}
+end const
+
+type
+    {User defined types}
+    tGrade = {A, B, C_PLUS, C_MINUS, D}
+    tActivityType = {CAA, PR}
+    tActivityName = {CAA1, CAA2, CAA3, CAA4, PR1, PR2, PR3}
+    tActivityState = {SUBMITTED, NOT_SUBMITTED, EXCLUDED}
+
+    tActivity = record
+        name: tActivityName;    {Activity Name}
+        state: tActivityState;  {Activity State}
+        mark: real;             {Activity Mark}
+    end record
+
+    tStudent = record
+        studentId: integer; {Student ID}
+        name: string; {Student Name}
+        activities: vector[NUM_ACTIVITIES] of tActivity; {Student Activities}
+        {Exercise 1}
+        {Exercise 1: 1. Add required fields to the students data structure:}
+            {- to save the final marks for CAA and PR activities}
+        caaMark: real;
+        prMark: real;
+            {- to save the number of CAA and PR submitted activities}
+        nCaa: integer;
+        nPr: integer;
+            {- to save the final mark}
+        finalMark: real;
+            {- to save the Absent registry}
+                {- true if the student haven't submitted enough activities}
+                {- false if the student has submitted enough activities}
+        absent: boolean;
+    end record
+end type
+    
+{Exercise 1: 2. Read data from marks file}
+action studentsLoadDataFromFile (
+    in filename: string,
+    out studentsTable: tStudentsTable,
+    out isRead: boolean
+  )
+    var
+      fileToRead: file;
+      newStudent: tStudent;
+      i: integer;
+    end var;
+  
+    fileToRead := openFile(filename);
+    if fileToRead ≠ NULL then
+  
+      { Initialize table }
+      studentsTable.nStudents := 0;
+  
+      while not isEndOfFile(fileToRead) and studentsTable.nStudents < MAX_STUDENTS do
+        newStudent.studentId := readIntegerFromFile(fileToRead);
+        newStudent.name := readStringFromFile(fileToRead);
+        for i := 1 to NUM_ACTIVITIES do
+          { Read mark and activity state }
+          newStudent.activities[i].mark := readRealFromFile(fileToRead);
+          newStudent.activities[i].state := readEnumFromFile(fileToRead);
+          { Assign activity name }
+           if i := 1 then
+               newStudent.activities[i].name := CAA1;
+           else
+               if i := 2 then
+                   newStudent.activities[i].name := CAA2;
+               else
+                   if i := 3 then
+                       newStudent.activities[i].name := CAA3;
+                   else
+                       if i := 4 then
+                           newStudent.activities[i].name := CAA4;
+                       else
+                           if i := 5 then
+                               newStudent.activities[i].name := PR1;
+                           else
+                               if i := 6 then
+                                   newStudent.activities[i].name := PR2;
+                               else
+                                   newStudent.activities[i].name := PR3;
+                               end if
+                           end if
+                       end if
+                   end if
+               end if
+           end if
+            
+        end for;
+  
+        { Add newStudent to studentsTable }
+         studentsTable.nStudents := studentsTable.nStudents + 1;
+         studentsTable.students[studentsTable.nStudents] := newStudent;
+      end while;
+      closeFile(fileToRead);
+      isRead := true;
+    else
+      isRead := false;
+    end if;
+end action;
+
+algorithm UOCSubjectGrades
+    var
+        studentsTable: tStudentsTable;
+        i, studentId: integer;
+        filename: string;
+        isRead, found: boolean;
+        approvedPercent: real;
+        {...}
+    end var
+
+    {Initialize variables}
+
+    { Exercise 1 }
+    { Load data from file }
+    writeString("LOAD DATA FROM FILE. ENTER FILENAME >>");
+    filename := readString();
+    studentsLoadDataFromFile(filename, studentsTable, isRead);
+end algorithm
