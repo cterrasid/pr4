@@ -195,6 +195,8 @@ action calculateFinalMarkByActivityType (inout student: tStudent)
         end if
 
     end for
+    student.caaMark := student.caaMark / TOTAL_WEIGHT;
+    student.prMark := student.prMark / TOTAL_WEIGHT;
 end action
 
 { Exercise 3 }
@@ -216,6 +218,65 @@ action calculateFinalMark (inout student: tStudent)
                 student.finalMark := 4;
             end if
         end if
+    end if
+end action
+
+{ Exercise 4 }
+{ Save data to file }
+action saveAndDisplayStudentsData (in studentsTable: tStudentsTable)
+    var
+        i: integer;
+        fileToWrite: file;
+    end var
+    
+    { Initialize variables }
+    fileToWrite := openFile("grades.txt");
+    
+    if studentsTable.nStudents = 0 then
+        writeString(“STUDENT LIST EMPTY”);
+    else
+        {ID estudiante}
+        writeIntegerToFile(fileToWrite, studentsTable.students[i].studentId);
+        {nombre estudiante}
+        writeStringToFile(fileToWrite, studentsTable.students[i].name);
+        {nota final CAA y PR estudiante}
+        writeRealToFile(fileToWrite, studentsTable.students[i].caaMark);
+        writeRealToFile(fileToWrite, studentsTable.students[i].prMark);
+        {numero de actividades CAA y PR estudiante}
+        writeIntegerToFile(fileToWrite, studentsTable.students[i].nCaa);
+        writeIntegerToFile(fileToWrite, studentsTable.students[i].nPr);
+        {nota final de EC estudiante}
+        writeRealToFile(fileToWrite, studentsTable.students[i].finalMark);
+        {registro de No Presentado estudiante}
+        writeBooleanToFile(fileToWrite, studentsTable.students[i].absent);
+    end if
+    
+    writeStudentsData(studentsTable);
+    closeFile(fileToWrite);
+end action
+
+{ Display student data }
+action writeStudentsData (in studentsTable: tStudentsTable)
+    var
+        i: integer;
+    end var
+    
+    if studentsTable.nStudents = 0 then
+        writeString(“STUDENT LIST EMPTY”);
+    else
+        writeString(ID NAME CAA_MARK PR_MARK N_CAA N_PR FINAL_MARK ABSENT?(1=YES)”);
+        writeString(“--------------------------------------------------------------------------------------------------------------------”);
+
+        for i := 1 to studentsTable.nStudents do
+            writeInteger(studentsTable.students[i].studentId);
+            writeString(studentsTable.students[i].name);
+            writeReal(studentsTable.students[i].caaMark);
+            writeReal(studentsTable.students[i].prMark);
+            writeInteger(studentsTable.students[i].nCaa);
+            writeInteger(studentsTable.students[i].nPr);
+            writeReal(studentsTable.students[i].finalMark);
+            writeBoolean(studentsTable.students[i].absent);
+        end for
     end if
 end action
 
@@ -245,6 +306,8 @@ algorithm UOCSubjectGrades
             { Exercise 3 }
             calculateFinalMark(studentsTable.students[i]);
         end for
+        { Exercise 4 }
+        saveAndDisplayStudentsData(studentsTable);
     else
         writeString("NO STUDENTS RECOVERED");
     end if
