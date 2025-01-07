@@ -18,7 +18,7 @@ const
     PR3_WEIGHT: integer = 50;        { Percent weight of PR3 in PR grade }
 
     { TODO: Agregar constantes necesarias...}
-    TOTAL_WEIGHT: integer = 100;     { Total weight for CAA or PR activities group }
+    TOTAL_MARKS_WEIGHT: integer = 100;     { Total weight for CAA or PR activities group }
     FINAL_CAA_WEIGHT: integer = 30;    { Final CAA weight }
     FINAL_PR_WEIGHT: integer = 70;     { Final PR weight }
 end const
@@ -195,8 +195,8 @@ action calculateFinalMarkByActivityType (inout student: tStudent)
         end if
 
     end for
-    student.caaMark := student.caaMark / TOTAL_WEIGHT;
-    student.prMark := student.prMark / TOTAL_WEIGHT;
+    student.caaMark := student.caaMark / TOTAL_MARKS_WEIGHT;
+    student.prMark := student.prMark / TOTAL_MARKS_WEIGHT;
 end action
 
 { Exercise 3 }
@@ -211,7 +211,7 @@ action calculateFinalMark (inout student: tStudent)
             student.finalMark := student.prMark;
         else
         {En cualquier otro caso, la nota final de EC será la media ponderada de la nota final de CAA (30%) y la nota final de PR (70%)}
-            student.finalMark := (student.caaMark * FINAL_CAA_WEIGHT + student.prMark * FINAL_PR_WEIGHT) / TOTAL_WEIGHT;
+            student.finalMark := (student.caaMark * FINAL_CAA_WEIGHT + student.prMark * FINAL_PR_WEIGHT) / TOTAL_MARKS_WEIGHT;
             {Si la nota final de EC está aprobada, pero no se han entregado todas las PR, la nota final de EC será un 4. Utilizar la función allSubmittedPr}
             student.absent := not allSubmittedPr(student.nPr);
             if student.absent then
@@ -256,6 +256,7 @@ action saveAndDisplayStudentsData (in studentsTable: tStudentsTable)
 end action
 
 { Exercise 5 }
+{ Algoritmo de ordenación }
 action sortDescendingByFinalMark (inout studentsTable: tStudentsTable)
     {Ordenar tabla de estudiantes por nota final de EC de forma descendente}
     var
@@ -301,6 +302,30 @@ action sortDescendingByFinalMark (inout studentsTable: tStudentsTable)
     {Mostrar por pantalla la lista de estudiantes ordenada}
     writeStudentsData(studentsTable);
 end action
+
+{ Exercise 6 }
+function displayApprovedStats (studentsTable: tStudentsTable): real
+    var
+        approvedStudentsCount: integer;
+        i: integer;
+    end var
+    
+    { Initialize variables }
+    approvedStudentsCount := 0;
+
+    for i := 1 to studentsTable.nStudents do
+        {Obtener el porcentaje de aprobados}
+        if studentsTable.students[i].finalMark > MIN_C_PLUS and not studentsTable.students[i].absent then
+            approvedStudentsCount := approvedStudentsCount + 1;
+        end if
+    end for
+
+    if studentsTable.nStudents = 0 then
+        return 0.0;
+    end if
+    
+    return integerToReal(approvedStudentsCount) / integerToReal(studentsTable.nStudents) * 100.0;
+end function
 
 { Display student data }
 action writeStudentsData (in studentsTable: tStudentsTable)
@@ -359,6 +384,10 @@ algorithm UOCSubjectGrades
         writeString("==============");
         { Exercise 5 }
         sortDescendingByFinalMark(studentsTable);
+        { Exercise 6 }
+        approvedPercent := displayApprovedStats(studentsTable);
+        writeString("Percent students approved: ");
+        writeReal(approvedPercent);
     else
         writeString("NO STUDENTS RECOVERED");
     end if
