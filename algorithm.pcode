@@ -255,6 +255,53 @@ action saveAndDisplayStudentsData (in studentsTable: tStudentsTable)
     closeFile(fileToWrite);
 end action
 
+{ Exercise 5 }
+action sortDescendingByFinalMark (inout studentsTable: tStudentsTable)
+    {Ordenar tabla de estudiantes por nota final de EC de forma descendente}
+    var
+        {Defino variables para iterar normaL (i)}
+        {para designar segunda posición (j)}
+        {para guardar la posición del mínimo (posMin)}
+        i, j, posMin: integer;
+        {para intercambiar valores (aux)}
+        aux: tStudent;
+    end var
+    
+    { Initialize variables }
+    i := 1;
+    {Itero sobre la tabla de estudiantes con i}
+    while i < studentsTable.nStudents do
+        {La posición mínima es la actual, o sea i}
+        posMin := i;
+        {j es la posición siguiente a i}
+        j := i + 1;
+        {Itero sobre la tabla de estudiantes con j, desde i+1 hasta el final}
+        while j <= studentsTable.nStudents do
+            {Si la nota final de EC de la posición j es mayor que la de la posición posMin, actualizo posMin}
+            if studentsTable.students[j].finalMark > studentsTable.students[posMin].finalMark then
+                posMin := j;
+            else
+                {Si hay empate en la nota final de EC, irá primero el estudiante con menor ID}
+                if studentsTable.students[j].finalMark = studentsTable.students[posMin].finalMark then
+                    if studentsTable.students[j].studentId < studentsTable.students[posMin].studentId then
+                        posMin := j;
+                    end if
+                end if
+            end if
+            j := j + 1;
+        end while
+        {Si la posición mínima no es la actual, intercambio los valores}
+        if posMin ≠ i then
+            aux := studentsTable.students[posMin];
+            studentsTable.students[posMin] := studentsTable.students[i];
+            studentsTable.students[i] := aux;
+        end if
+        i := i + 1;
+    end while
+    {Mostrar por pantalla la lista de estudiantes ordenada}
+    writeStudentsData(studentsTable);
+end action
+
 { Display student data }
 action writeStudentsData (in studentsTable: tStudentsTable)
     var
@@ -308,6 +355,10 @@ algorithm UOCSubjectGrades
         end for
         { Exercise 4 }
         saveAndDisplayStudentsData(studentsTable);
+        writeString("STUDENTS MARKS");
+        writeString("==============");
+        { Exercise 5 }
+        sortDescendingByFinalMark(studentsTable);
     else
         writeString("NO STUDENTS RECOVERED");
     end if
