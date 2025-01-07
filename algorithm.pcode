@@ -19,6 +19,8 @@ const
 
     { TODO: Agregar constantes necesarias...}
     TOTAL_WEIGHT: integer = 100;     { Total weight for CAA or PR activities group }
+    FINAL_CAA_WEIGHT: integer = 30;    { Final CAA weight }
+    FINAL_PR_WEIGHT: integer = 70;     { Final PR weight }
 end const
 
 type
@@ -162,7 +164,7 @@ end function
 { Exercise 2 }
 { Calculate the CAA and PR final mark (separated) for each student, with 2 decimals precision }
 { Count the number of submitted CAA and PR activities using finalMarkByActivity and activityTypeNumber }
-action calculateFinalMark (inout student: tStudent)
+action calculateFinalMarkByActivityType (inout student: tStudent)
     var
         activityType: tActivityType;
         activityWeight: real;
@@ -195,6 +197,28 @@ action calculateFinalMark (inout student: tStudent)
     end for
 end action
 
+{ Exercise 3 }
+{Calculate final mark for each student}
+action calculateFinalMark (inout student: tStudent)
+    {Si la nota final de CAA no llega a 4, la nota final de EC será la de CAA}
+    if student.caaMark < 4 then
+        student.finalMark := student.caaMark;
+    else
+    {Si la nota final de PR no llega a 5, la nota final de EC será la de PR}
+        if student.prMark < 5 then
+            student.finalMark := student.prMark;
+        else
+        {En cualquier otro caso, la nota final de EC será la media ponderada de la nota final de CAA (30%) y la nota final de PR (70%)}
+            student.finalMark := (student.caaMark * FINAL_CAA_WEIGHT + student.prMark * FINAL_PR_WEIGHT) / TOTAL_WEIGHT;
+            {Si la nota final de EC está aprobada, pero no se han entregado todas las PR, la nota final de EC será un 4. Utilizar la función allSubmittedPr}
+            student.absent := not allSubmittedPr(student.nPr);
+            if student.absent then
+                student.finalMark := 4;
+            end if
+        end if
+    end if
+end action
+
 algorithm UOCSubjectGrades
     var
         studentsTable: tStudentsTable;
@@ -217,6 +241,8 @@ algorithm UOCSubjectGrades
         writeString("RESULTS:");
         for i := 1 to studentsTable.nStudents do
             { Exercise 2 }
+            calculateFinalMarkByActivityType(studentsTable.students[i]);
+            { Exercise 3 }
             calculateFinalMark(studentsTable.students[i]);
         end for
     else
