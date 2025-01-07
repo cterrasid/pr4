@@ -1,57 +1,57 @@
 const
-    MAX_STUDENTS: integer = 20;      {Max. number of students}
-    NUM_ACTIVITIES: integer = 7;     {Max. number of activities of the subject}
-    NUM_CAA_ACTIVITIES: integer = 4; {Number of CAA activities}
-    NUM_PR_ACTIVITIES: integer = 3;  {Number of PR activities}
+    MAX_STUDENTS: integer = 20;      { Max. number of students }
+    NUM_ACTIVITIES: integer = 7;     { Max. number of activities of the subject }
+    NUM_CAA_ACTIVITIES: integer = 4; { Number of CAA activities }
+    NUM_PR_ACTIVITIES: integer = 3;  { Number of PR activities }
 
-    MIN_C_MINUS: real = 3.0;         {Minimum mark for grade C-}
-    MIN_C_PLUS: real = 5.0;          {Minimum mark for grade C+}
-    MIN_B: real = 7.0;               {Minimum mark for grade B}
-    MIN_A: real = 9.0;               {Minimum mark for grade A}
+    MIN_C_MINUS: real = 3.0;         { Minimum mark for grade C- }
+    MIN_C_PLUS: real = 5.0;          { Minimum mark for grade C+ }
+    MIN_B: real = 7.0;               { Minimum mark for grade B }
+    MIN_A: real = 9.0;               { Minimum mark for grade A }
 
-    CAA1_WEIGHT: integer = 10;       {Percent weight of CAA1 in CAA grade}
-    CAA2_WEIGHT: integer = 20;       {Percent weight of CAA2 in CAA grade}
-    CAA3_WEIGHT: integer = 30;       {Percent weight of CAA3 in CAA grade}
-    CAA4_WEIGHT: integer = 40;       {Percent weight of CAA4 in CAA grade}
-    PR1_WEIGHT: integer = 20;        {Percent weight of PR1 in PR grade}
-    PR2_WEIGHT: integer = 30;        {Percent weight of PR2 in PR grade}
-    PR3_WEIGHT: integer = 50;        {Percent weight of PR3 in PR grade}
+    CAA1_WEIGHT: integer = 10;       { Percent weight of CAA1 in CAA grade }
+    CAA2_WEIGHT: integer = 20;       { Percent weight of CAA2 in CAA grade }
+    CAA3_WEIGHT: integer = 30;       { Percent weight of CAA3 in CAA grade }
+    CAA4_WEIGHT: integer = 40;       { Percent weight of CAA4 in CAA grade }
+    PR1_WEIGHT: integer = 20;        { Percent weight of PR1 in PR grade }
+    PR2_WEIGHT: integer = 30;        { Percent weight of PR2 in PR grade }
+    PR3_WEIGHT: integer = 50;        { Percent weight of PR3 in PR grade }
 
     { TODO: Agregar constantes necesarias...}
+    TOTAL_WEIGHT: integer = 100;     { Total weight for CAA or PR activities group }
 end const
 
 type
-    {User defined types}
+    { User defined types }
     tGrade = {A, B, C_PLUS, C_MINUS, D}
     tActivityType = {CAA, PR}
     tActivityName = {CAA1, CAA2, CAA3, CAA4, PR1, PR2, PR3}
     tActivityState = {SUBMITTED, NOT_SUBMITTED, EXCLUDED}
 
     tActivity = record
-        name: tActivityName;    {Activity Name}
-        state: tActivityState;  {Activity State}
-        mark: real;             {Activity Mark}
+        name: tActivityName;    { Activity Name }
+        state: tActivityState;  { Activity State }
+        mark: real;             { Activity Mark }
     end record
 
     tStudent = record
-        studentId: integer; {Student ID}
-        name: string; {Student Name}
-        activities: vector[NUM_ACTIVITIES] of tActivity; {Student Activities}
+        studentId: integer; { Student ID }
+        name: string; { Student Name }
+        activities: vector[NUM_ACTIVITIES] of tActivity; { Student Activities }
         {Exercise 1}
-        {Exercise 1: 1. Add required fields to the students data structure:}
-            {- to save the final marks for CAA and PR activities}
-        caaMark: real;
-        prMark: real;
-            {- to save the number of CAA and PR submitted activities}
-        nCaa: integer;
-        nPr: integer;
-            {- to save the final mark}
-        finalMark: real;
-            {- to save the Absent registry}
-                {- true if the student haven't submitted enough activities}
-                {- false if the student has submitted enough activities}
-        absent: boolean;
+        caaMark: real;  { Student final CAA mark }
+        prMark: real;   { Student final PR mark }
+        nCaa: integer;  { Student number of submitted CAA activities }
+        nPr: integer;   { Student number of submitted PR activities }
+        finalMark: real; { Student final mark }
+        absent: boolean; { Student is absent }
     end record
+    
+    tStudentsTable = record
+        students: vector[MAX_STUDENTS] of tStudent; { Students info and grades }
+        nStudents: integer; { Number of students }
+    end record
+
 end type
     
 {Exercise 1: 2. Read data from marks file}
@@ -127,25 +127,25 @@ action activityTypeWeight (
   )
     activityType := CAA;
     if activity = CAA1 then
-        activityWeight := CAA1_WEIGHT;
+        activityWeight := integerToReal(CAA1_WEIGHT);
     else
         if activity = CAA2 then
-            activityWeight := CAA2_WEIGHT;
+            activityWeight := integerToReal(CAA2_WEIGHT);
         else
             if activity = CAA3 then
-                activityWeight := CAA3_WEIGHT;
+                activityWeight := integerToReal(CAA3_WEIGHT);
             else
                 if activity = CAA4 then
-                    activityWeight := CAA4_WEIGHT;
+                    activityWeight := integerToReal(CAA4_WEIGHT);
                 else
                     activityType := PR;
                     if activity = PR1 then
-                        activityWeight := PR1_WEIGHT;
+                        activityWeight := integerToReal(PR1_WEIGHT);
                     else
                         if activity = PR2 then
-                            activityWeight := PR2_WEIGHT;
+                            activityWeight := integerToReal(PR2_WEIGHT);
                         else
-                            activityWeight := PR3_WEIGHT;
+                            activityWeight := integerToReal(PR3_WEIGHT);
                         end if
                     end if
                 end if
@@ -158,6 +158,42 @@ end action
 function allSubmittedPr (nSubmittedPr: integer): boolean
     return nSubmittedPr = NUM_PR_ACTIVITIES;
 end function
+
+{ Exercise 2 }
+{ Calculate the CAA and PR final mark (separated) for each student, with 2 decimals precision }
+{ Count the number of submitted CAA and PR activities using finalMarkByActivity and activityTypeNumber }
+action calculateFinalMark (inout student: tStudent)
+    var
+        activityType: tActivityType;
+        activityWeight: real;
+        mark: real;
+        i: integer;
+    end var
+    
+    { Initializations }
+    student.caaMark := 0.0;
+    student.prMark := 0.0;
+    student.nCaa := 0;
+    student.nPr := 0;
+    
+    for i := 1 to NUM_ACTIVITIES do
+        activityTypeWeight(student.activities[i].name, activityType, activityWeight);
+        mark := student.activities[i].mark * activityWeight;
+        
+        if activityType = CAA then
+            student.caaMark := student.caaMark + mark;
+            if student.activities[i].state = SUBMITTED then
+                student.nCaa := student.nCaa + 1;
+            end if
+        else
+            student.prMark := student.prMark + mark;
+            if student.activities[i].state = SUBMITTED then
+                student.nPr := student.nPr + 1;
+            end if
+        end if
+
+    end for
+end action
 
 algorithm UOCSubjectGrades
     var
@@ -176,4 +212,14 @@ algorithm UOCSubjectGrades
     writeString("LOAD DATA FROM FILE. ENTER FILENAME >>");
     filename := readString();
     studentsLoadDataFromFile(filename, studentsTable, isRead);
+
+    if isRead then
+        writeString("RESULTS:");
+        for i := 1 to studentsTable.nStudents do
+            { Exercise 2 }
+            calculateFinalMark(studentsTable.students[i]);
+        end for
+    else
+        writeString("NO STUDENTS RECOVERED");
+    end if
 end algorithm
