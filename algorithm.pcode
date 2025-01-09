@@ -327,6 +327,30 @@ function displayApprovedStats (studentsTable: tStudentsTable): real
     return integerToReal(approvedStudentsCount) / integerToReal(studentsTable.nStudents) * 100.0;
 end function
 
+{ Exercise 7 }
+action listStudentsWithHonors (in studentsTable: tStudentsTable, out studentsWithHonors: tStudentsTable)
+    var
+        i: integer;
+        j: integer;
+    end var
+    
+    { Initialize variables }
+    i := 1;
+    j := 1;
+    studentsWithHonors.nStudents := 0;
+
+    for i := 1 to studentsTable.nStudents do
+        if studentsTable.students[i].finalMark >= MIN_A then
+            studentsWithHonors.students[j] := studentsTable.students[i];
+            j := j + 1;
+        end if
+    end for
+
+    studentsWithHonors.nStudents := j - 1;
+
+    writeStudentsData(studentsWithHonors);
+end action
+
 { Display student data }
 action writeStudentsData (in studentsTable: tStudentsTable)
     var
@@ -355,6 +379,7 @@ end action
 algorithm UOCSubjectGrades
     var
         studentsTable: tStudentsTable;
+        studentsWithHonors: tStudentsTable;
         i, studentId: integer;
         filename: string;
         isRead, found: boolean;
@@ -388,6 +413,10 @@ algorithm UOCSubjectGrades
         approvedPercent := displayApprovedStats(studentsTable);
         writeString("Percent students approved: ");
         writeReal(approvedPercent);
+        { Exercise 7 }
+        listStudentsWithHonors(studentsTable, studentsWithHonors);
+        writeString("STUDENTS IN HONOR LIST");
+        writeString("======================");
     else
         writeString("NO STUDENTS RECOVERED");
     end if
