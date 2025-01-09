@@ -1,6 +1,5 @@
 #include "grades.h"
 
-
 /* Function to load student data from file */
 void studentsLoadDataFromFile(const char* filename, tStudentsTable *studentsTable, bool *isRead)
 {
@@ -61,7 +60,7 @@ void studentsLoadDataFromFile(const char* filename, tStudentsTable *studentsTabl
 				/* Add student to students vector*/
 				studentsTable->students[studentsTable->nStudents] = newStudent;
                 /* Increment the counter. */
-				studentsTable->nStudents++ ;						
+				studentsTable->nStudents++ ;
 			}
 		}
 		/* Close the file */
@@ -73,35 +72,29 @@ void studentsLoadDataFromFile(const char* filename, tStudentsTable *studentsTabl
 	}
 }
 
-
 /* Action that returns the type of activity and its weight */
-void activityTypeWeight (tActivityName activity, tActivityType *activityType, int *activityWeight) {
+void activityTypeWeight (tActivityName activity, tActivityType *activityType, float *activityWeight) {
+	*activityType = CAA;
     if (activity == CAA1) {
-        *activityType = CAA;
-        *activityWeight = CAA1_WEIGHT;
+        *activityWeight = (float)CAA1_WEIGHT;
     } else {
         if (activity == CAA2) {
-            *activityType = CAA;
-            *activityWeight = CAA2_WEIGHT;
+            *activityWeight = (float)CAA2_WEIGHT;
         } else {
             if (activity == CAA3) {
-                *activityType = CAA;
-                *activityWeight = CAA3_WEIGHT;
+                *activityWeight = (float)CAA3_WEIGHT;
             } else {
                 if (activity == CAA4) {
-                    *activityType = CAA;
-                    *activityWeight = CAA4_WEIGHT;
+                    *activityWeight = (float)CAA4_WEIGHT;
                 } else {
+					*activityType = PR;
                     if (activity == PR1) {
-                        *activityType = PR;
-                        *activityWeight = PR1_WEIGHT;
+                        *activityWeight = (float)PR1_WEIGHT;
                     } else {
                         if (activity == PR2) {
-                            *activityType = PR;
-                            *activityWeight = PR2_WEIGHT;
+                            *activityWeight = (float)PR2_WEIGHT;
                         } else {
-							*activityType = PR;
-							*activityWeight = PR3_WEIGHT;
+							*activityWeight = (float)PR3_WEIGHT;
                         }
                     }
                 }
@@ -115,11 +108,40 @@ bool allSubmittedPr(int nSubmittedPr) {
     return nSubmittedPr == NUM_PR_ACTIVITIES;
 }
 
-
-
 /* Exercise 2 */
 /* Action to calculate a student's CAA and PR marks and number of activities */
-/* ... */
+void calculateFinalMarkByActivityType(tStudent *student) {
+	tActivityType activityType;
+	float activityWeight;
+	float mark;
+	int i;
+	
+	/* Initialize variables */
+	student->caaMark = 0.0;
+	student->prMark = 0.0;
+	student->nCaa = 0;
+	student->nPr = 0;
+	
+	for (i = 0; i < NUM_ACTIVITIES; i++) {
+		activityTypeWeight(student->activities[i].name, &activityType, &activityWeight);
+		mark = student->activities[i].mark * activityWeight;
+		
+		if (activityType == CAA) {
+			student->caaMark += mark;
+			if (student->activities[i].state == SUBMITTED) {
+				student->nCaa++;
+			}
+		} else {
+			student->prMark += mark;
+			if (student->activities[i].state == SUBMITTED) {
+				student->nPr++;
+			}
+		}
+	}
+
+	student->caaMark = student->caaMark / TOTAL_MARKS_WEIGHT;
+	student->prMark = student->prMark / TOTAL_MARKS_WEIGHT;
+}
 
 
 /* Exercise 3 */
@@ -165,10 +187,15 @@ void writeStudentsData(tStudentsTable studentsTable) {
     printf("-------------------------------------------------------------\n");
 
         for (i = 0 ; i < studentsTable.nStudents ; i++) {
-            printf("%d %s %.2f %.2f %d %d %.2f %d\n", studentsTable.students[i].studentId, studentsTable.students[i].name, 
-                    studentsTable.students[i].caaMark, studentsTable.students[i].prMark,
-                    studentsTable.students[i].nCaa, studentsTable.students[i].nPr,
-                    studentsTable.students[i].finalMark, studentsTable.students[i].absent);                                       
+            printf("%d %s %.2f %.2f %d %d %.2f %d\n",
+					studentsTable.students[i].studentId,
+					studentsTable.students[i].name, 
+                    studentsTable.students[i].caaMark,
+					studentsTable.students[i].prMark,
+                    studentsTable.students[i].nCaa,
+					studentsTable.students[i].nPr,
+                    studentsTable.students[i].finalMark,
+					studentsTable.students[i].absent);                                       
         }
     }	
 #endif

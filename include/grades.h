@@ -4,7 +4,7 @@
 #include <string.h>
 
 /* Uncomment the line below once you've completed the exercise 1*/
-//#define TYPEDEF_COMPLETED
+#define TYPEDEF_COMPLETED
 
 #define MAX_LINE 514
 
@@ -28,7 +28,7 @@
 #define PR3_WEIGHT  50 /* Percent weight of PR3 in PR grade */
 
 /* Constants defined for PR4 */
-/* ... */
+#define TOTAL_MARKS_WEIGHT 100 /* Total weight for CAA or PR activities group */
 
 /* User defined types */
 typedef enum {A = 1, B, C_PLUS, C_MINUS, D} tGrade;
@@ -63,7 +63,8 @@ typedef struct {
 
 /* Functions prototypes declaration */
 void studentsLoadDataFromFile(const char* filename, tStudentsTable *studentsTable, bool *isRead);
-void activityTypeWeight(tActivityName activity, tActivityType *activityType, int *activityWeight);
+void activityTypeWeight(tActivityName activity, tActivityType *activityType, float *activityWeight);
 bool allSubmittedPr(int nSubmittedPr);
 void writeStudentsData(tStudentsTable studentsTable);
+void calculateFinalMarkByActivityType(tStudent *student);
 /* ... */

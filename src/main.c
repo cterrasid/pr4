@@ -34,10 +34,10 @@ int main(int argc, char **argv)
 	if (isRead) { /* Data successfully loaded */
 
            printf ("\nRESULTS:\n");
-           
+		   
            for(i = 0; i < studentsTable.nStudents; i++) {
                /* Exercise 2 */          
-               /* ... */
+               calculateFinalMarkByActivityType(&studentsTable.students[i]);
                /* Exercise 3 */
                /* ... */
            }
