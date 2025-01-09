@@ -46,7 +46,7 @@ type
         nCaa: integer;  { Student number of submitted CAA activities }
         nPr: integer;   { Student number of submitted PR activities }
         finalMark: real; { Student final mark }
-        absent: boolean; { Student is absent }
+        absent: boolean; { Student is absent or not }
     end record
     
     tStudentsTable = record
@@ -67,7 +67,8 @@ action studentsLoadDataFromFile (
       newStudent: tStudent;
       i: integer;
     end var;
-  
+    
+    { Open the file }
     fileToRead := openFile(filename);
     if fileToRead ≠ NULL then
   
@@ -111,9 +112,11 @@ action studentsLoadDataFromFile (
         end for;
   
         { Add newStudent to studentsTable }
-         studentsTable.nStudents := studentsTable.nStudents + 1;
-         studentsTable.students[studentsTable.nStudents] := newStudent;
+        studentsTable.students[studentsTable.nStudents] := newStudent;
+        studentsTable.nStudents := studentsTable.nStudents + 1;
       end while;
+
+      { Close the file }
       closeFile(fileToRead);
       isRead := true;
     else
