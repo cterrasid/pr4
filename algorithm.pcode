@@ -414,9 +414,9 @@ algorithm UOCSubjectGrades
         writeString("Percent students approved: ");
         writeReal(approvedPercent);
         { Exercise 7 }
-        listStudentsWithHonors(studentsTable, studentsWithHonors);
         writeString("STUDENTS IN HONOR LIST");
         writeString("======================");
+        listStudentsWithHonors(studentsTable, studentsWithHonors);
     else
         writeString("NO STUDENTS RECOVERED");
     end if
