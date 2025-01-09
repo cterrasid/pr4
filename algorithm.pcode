@@ -351,6 +351,30 @@ action listStudentsWithHonors (in studentsTable: tStudentsTable, out studentsWit
     writeStudentsData(studentsWithHonors);
 end action
 
+{ Exercise 8 }
+{ Search algorithm: Check if student is eligible for honors }
+function isEligibleForHonors (studentId: integer, studentsWithHonors: tStudentsTable): boolean
+    var
+        i: integer;
+    end var
+            
+    { Initialize variables }
+    i := 1;
+
+    if studentsWithHonors.nStudents = 0 then
+        return false;
+    end if
+
+    while i <= studentsWithHonors.nStudents do
+        if studentsWithHonors.students[i].studentId = studentId then
+            return true;
+        end if
+        i := i + 1;
+    end while
+
+    return false;
+end function
+
 { Display student data }
 action writeStudentsData (in studentsTable: tStudentsTable)
     var
@@ -417,6 +441,15 @@ algorithm UOCSubjectGrades
         writeString("STUDENTS IN HONOR LIST");
         writeString("======================");
         listStudentsWithHonors(studentsTable, studentsWithHonors);
+        { Exercise 8 }
+        writeString("SELECT STUDENT BY ID >>");
+        studentId := readInteger();
+        found := isEligibleForHonors(studentId, studentsWithHonors);
+        if found then
+            writeString("STUDENT IN HONOR LIST");
+        else
+            writeString("STUDENT NOT IN HONOR LIST");
+        end if
     else
         writeString("NO STUDENTS RECOVERED");
     end if
