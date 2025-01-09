@@ -28,7 +28,9 @@
 #define PR3_WEIGHT  50 /* Percent weight of PR3 in PR grade */
 
 /* Constants defined for PR4 */
-#define TOTAL_MARKS_WEIGHT 100 /* Total weight for CAA or PR activities group */
+#define TOTAL_MARKS_WEIGHT 100	/* Total weight for CAA or PR activities group */
+#define FINAL_CAA_WEIGHT 30		/* Final CAA weight */
+#define FINAL_PR_WEIGHT 70      /* Final PR weight */
 
 /* User defined types */
 typedef enum {A = 1, B, C_PLUS, C_MINUS, D} tGrade;
@@ -67,4 +69,5 @@ void activityTypeWeight(tActivityName activity, tActivityType *activityType, flo
 bool allSubmittedPr(int nSubmittedPr);
 void writeStudentsData(tStudentsTable studentsTable);
 void calculateFinalMarkByActivityType(tStudent *student);
+void calculateFinalMark(tStudent *student);
 /* ... */

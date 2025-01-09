@@ -1,5 +1,6 @@
 #include "grades.h"
 
+
 /* Function to load student data from file */
 void studentsLoadDataFromFile(const char* filename, tStudentsTable *studentsTable, bool *isRead)
 {
@@ -71,6 +72,7 @@ void studentsLoadDataFromFile(const char* filename, tStudentsTable *studentsTabl
 		*isRead = false;
 	}
 }
+
 
 /* Action that returns the type of activity and its weight */
 void activityTypeWeight (tActivityName activity, tActivityType *activityType, float *activityWeight) {
@@ -146,7 +148,21 @@ void calculateFinalMarkByActivityType(tStudent *student) {
 
 /* Exercise 3 */
 /* Action that calculates student's final mark and NP registry */
-/* ... */
+void calculateFinalMark(tStudent *student) {
+	if (student->caaMark < 4) {
+		student->finalMark = student->caaMark;
+	} else {
+		if (student->prMark < 5) {
+			student->finalMark = student->prMark;
+		} else {
+			student->finalMark = (student->caaMark * FINAL_CAA_WEIGHT + student->prMark * FINAL_PR_WEIGHT) / TOTAL_MARKS_WEIGHT;
+			student->absent = !allSubmittedPr(student->nPr);
+			if (student->absent) {
+				student->finalMark = 4;
+			}
+		}
+	}
+}
 
 
 /* Exercise 4 */

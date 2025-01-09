@@ -39,7 +39,7 @@ int main(int argc, char **argv)
                /* Exercise 2 */          
                calculateFinalMarkByActivityType(&studentsTable.students[i]);
                /* Exercise 3 */
-               /* ... */
+               calculateFinalMark(&studentsTable.students[i]);
            }
 
            /* Exercise 4 */
