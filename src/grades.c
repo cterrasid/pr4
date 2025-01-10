@@ -110,6 +110,8 @@ bool allSubmittedPr(int nSubmittedPr) {
     return nSubmittedPr == NUM_PR_ACTIVITIES;
 }
 
+
+
 /* Exercise 2 */
 /* Action to calculate a student's CAA and PR marks and number of activities */
 void calculateFinalMarkByActivityType(tStudent *student) {
@@ -148,31 +150,115 @@ void calculateFinalMarkByActivityType(tStudent *student) {
 
 /* Exercise 3 */
 /* Action that calculates student's final mark and NP registry */
+// ACTUALIZA LA NOTA FINAL EL REGISTRO DE NO PRESENTADO
 void calculateFinalMark(tStudent *student) {
+	bool isNotApproved;
+	
+	isNotApproved = false;
+	
+	// SI LA NOTA FINAL DE CAA ES MENOR A 4
 	if (student->caaMark < 4) {
+		// LA NOTA FINAL ES LA NOTA DE CAA
 		student->finalMark = student->caaMark;
+		/*printf("CACA IF CAA < 4: %f\n", student->finalMark);*/
+		isNotApproved = true;
 	} else {
+		// SI LA NOTA FINAL DE PR ES MENOR A 5
 		if (student->prMark < 5) {
+			// LA NOTA FINAL ES LA NOTA DE PR
 			student->finalMark = student->prMark;
-		} else {
+			/*printf("CACA IF PR < 5: %f\n", student->finalMark);*/
+			isNotApproved = true;
+		} else {		
+			// SI NO, LA NOTA FINAL ES LA MEDIA PONDERADA ENTRE CAA Y PR
 			student->finalMark = (student->caaMark * FINAL_CAA_WEIGHT + student->prMark * FINAL_PR_WEIGHT) / TOTAL_MARKS_WEIGHT;
-			student->absent = !allSubmittedPr(student->nPr);
-			if (student->absent) {
+			// SI LA NOTA FINAL ES OK PERO HAY NO PRESENTADO
+			// FALTA CONDICION DE APROBADO
+			if (!isNotApproved && !allSubmittedPr(student->nPr)) {
+				// LA NOTA FINAL SERA 4
 				student->finalMark = 4;
 			}
+			/*printf("CACA IF OK: %f\n", student->finalMark);*/
 		}
 	}
+	student->absent = student->nCaa < 3 && student->nPr < 2;
 }
 
 
 /* Exercise 4 */
 /* Action that writes a student's ID, grade and NP in a file */
-/* ... */
+void saveAndDisplayStudentsData(tStudentsTable studentsTable) {
+	FILE* fileToWrite;
+	tStudent student;
+	int i;
+		
+	/* Open the file */
+	fileToWrite = fopen("grades.txt","w");
+	
+	if (fileToWrite != NULL) {
+		if (studentsTable.nStudents == 0) {
+			printf("STUDENT LIST EMPTY");
+		} else {
+			for (i = 0; i < studentsTable.nStudents; i++) {
+				student = studentsTable.students[i];
+				
+				/* Save student data to the file */
+				fprintf(fileToWrite, "%d %s %0.2f %0.2f %d %d %0.2f %d\n",
+						student.studentId,
+						student.name,
+						student.caaMark,
+						student.prMark,
+						student.nCaa,
+						student.nPr,
+						student.finalMark,
+						student.absent);
+			}
+		}
+	}
+	/* Display student data */
+	writeStudentsData(studentsTable);
+	
+	/* Close the file */
+	fclose(fileToWrite);
+}
 
 
 /* Exercise 5 */ 
 /* Action that order a student's table by mark and student id */	
-/* ... */
+void sortDescendingByFinalMark(tStudentsTable *studentsTable) {
+	int i, j, posMin;
+	tStudent aux;
+	
+	/* Initialize variables */
+	i = 0;
+	
+	while (i < studentsTable->nStudents) {
+		posMin = i;
+		j = i + 1;
+		while (j <= studentsTable->nStudents) {
+			if (studentsTable->students[j].finalMark > studentsTable->students[posMin].finalMark) {
+				posMin = j;
+			} else {
+				if (studentsTable->students[j].finalMark == studentsTable->students[posMin].finalMark) {
+					if (studentsTable->students[j].studentId < studentsTable->students[posMin].studentId) {
+						posMin = j;
+					}
+				}
+			}
+			j++;
+		}
+		
+		if (posMin != i) {
+			aux = studentsTable->students[posMin];
+			studentsTable->students[posMin] = studentsTable->students[i];
+			studentsTable->students[i] = aux;
+		}
+		i++;
+	}
+	
+	/* Display sorted students list */
+	writeStudentsData(*studentsTable);
+}
 
 
 /* Exercise 6 */ 

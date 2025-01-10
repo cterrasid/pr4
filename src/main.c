@@ -46,13 +46,13 @@ int main(int argc, char **argv)
            /* ... */
            printf("\nSTUDENTS MARKS\n");
            printf("==============\n");
-           /* ... */
+           saveAndDisplayStudentsData(studentsTable);
            
            /* Exercise 5 */
            /* ... */
            printf("\nSTUDENTS SORTED BY FINAL MARK\n");
            printf("=============================\n");
-           /* ... */
+           sortDescendingByFinalMark(&studentsTable);
 
            /* Exercise 6 */
            /* ... */
