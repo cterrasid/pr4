@@ -72,4 +72,6 @@ void calculateFinalMarkByActivityType(tStudent *student);
 void calculateFinalMark(tStudent *student);
 void saveAndDisplayStudentsData(tStudentsTable studentsTable);
 void sortDescendingByFinalMark(tStudentsTable *studentsTable);
+float displayApprovedStats(tStudentsTable studentsTable);
+void listStudentsWithHonors(tStudentsTable studentsTable, tStudentsTable *studentsWithHonors);
 /* ... */

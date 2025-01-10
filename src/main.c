@@ -15,7 +15,7 @@
 /* main */
 int main(int argc, char **argv)
 {
-	tStudentsTable studentsTable;
+	tStudentsTable studentsTable, studentsWithHonors;
 	int i, studentId;
 	
 	char filename[MAX_FILE_NAME];
@@ -55,14 +55,14 @@ int main(int argc, char **argv)
            sortDescendingByFinalMark(&studentsTable);
 
            /* Exercise 6 */
-           /* ... */
+           approvedPercent = displayApprovedStats(studentsTable);
            printf("\nPercent students approved: %.2f\n", approvedPercent);
         
            /* Exercise 7 */
            /* ... */
            printf("\nSTUDENTS IN HONOR LIST\n");
            printf("======================\n");
-           /* ... */
+           listStudentsWithHonors(studentsTable, &studentsWithHonors);
 
            /* Exercise 8 */
            printf("\nSELECT STUDENT BY ID >> \n");

@@ -263,12 +263,52 @@ void sortDescendingByFinalMark(tStudentsTable *studentsTable) {
 
 /* Exercise 6 */ 
 /* Function that calculates percent of approved students */
-/* ... */
+float displayApprovedStats(tStudentsTable studentsTable) {
+	int approvedStudentsCount, i;
+	bool isApproved;
+	tStudent student;
+	
+	/* Initialize variables */
+	approvedStudentsCount = 0;
+	
+	for (i = 0; i < studentsTable.nStudents; i++) {
+		student = studentsTable.students[i];
+		isApproved = student.finalMark >= MIN_C_PLUS;
+		// TODO: mEJORAR CONDICION CON UN ISAPPROVED
+		if (isApproved && !student.absent) {
+			approvedStudentsCount++;
+		}
+	}
+	
+	if (studentsTable.nStudents == 0) {
+		return 0.0;
+	}
+	
+	return ((float)approvedStudentsCount * 100.0) / (float)studentsTable.nStudents;
+}
 
 
 /* Exercise 7 */
 /* Action that obtains students candidates to honors */
-/* ... */
+void listStudentsWithHonors(tStudentsTable studentsTable, tStudentsTable *studentsWithHonors) {
+	int i, j;
+	
+	/* Initialize variables */
+	i = 0;
+	j = 0;
+	studentsWithHonors->nStudents = 0;
+	
+	for (i = 0; i < studentsTable.nStudents; i++) {
+		if (studentsTable.students[i].finalMark >= MIN_A) {
+			studentsWithHonors->students[j] = studentsTable.students[i];
+			j++;
+		}
+	}
+	
+	studentsWithHonors->nStudents = j;
+	
+	writeStudentsData(*studentsWithHonors);
+}
 
 
 /* Exercise 8 */
