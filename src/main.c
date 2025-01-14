@@ -15,14 +15,13 @@
 /* main */
 int main(int argc, char **argv)
 {
-	tStudentsTable studentsTable, studentsWithHonors;
+	tStudentsTable studentsTable, studentsWithHonorsTable;
 	int i, studentId;
 	
 	char filename[MAX_FILE_NAME];
 	float approvedPercent = 0.0;
 	
-	bool isRead = false;
-    bool found = false;
+	bool isRead, found = false;
 	
 	/* load data from file*/ 
     printf("LOAD DATA FROM FILE. ENTER FILE NAME >>\n");
@@ -43,13 +42,11 @@ int main(int argc, char **argv)
            }
 
            /* Exercise 4 */
-           /* ... */
            printf("\nSTUDENTS MARKS\n");
            printf("==============\n");
            saveAndDisplayStudentsData(studentsTable);
            
            /* Exercise 5 */
-           /* ... */
            printf("\nSTUDENTS SORTED BY FINAL MARK\n");
            printf("=============================\n");
            sortDescendingByFinalMark(&studentsTable);
@@ -59,15 +56,15 @@ int main(int argc, char **argv)
            printf("\nPercent students approved: %.2f\n", approvedPercent);
         
            /* Exercise 7 */
-           /* ... */
            printf("\nSTUDENTS IN HONOR LIST\n");
            printf("======================\n");
-           listStudentsWithHonors(studentsTable, &studentsWithHonors);
+           listStudentsWithHonors(studentsTable, &studentsWithHonorsTable);
 
            /* Exercise 8 */
            printf("\nSELECT STUDENT BY ID >> \n");
            scanf("%d", &studentId);
-           /* ... */
+           found = isEligibleForHonors(studentId, &studentsWithHonorsTable);
+		   
            if (found) {
                printf("STUDENT IN HONOR LIST\n");
            } else {

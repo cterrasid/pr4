@@ -58,7 +58,7 @@ void studentsLoadDataFromFile(const char* filename, tStudentsTable *studentsTabl
                     }
 				}	
 				
-				/* Add student to students vector*/
+				/* Add student to students vector */
 				studentsTable->students[studentsTable->nStudents] = newStudent;
                 /* Increment the counter. */
 				studentsTable->nStudents++ ;
@@ -105,7 +105,7 @@ void activityTypeWeight (tActivityName activity, tActivityType *activityType, fl
     }
 }
 
-/* Function that test all PR activies are submited */
+/* Function that check all PR activities are submitted */
 bool allSubmittedPr(int nSubmittedPr) {
     return nSubmittedPr == NUM_PR_ACTIVITIES;
 }
@@ -150,37 +150,31 @@ void calculateFinalMarkByActivityType(tStudent *student) {
 
 /* Exercise 3 */
 /* Action that calculates student's final mark and NP registry */
-// ACTUALIZA LA NOTA FINAL EL REGISTRO DE NO PRESENTADO
 void calculateFinalMark(tStudent *student) {
 	bool isNotApproved;
 	
+	/* Initialize variables */
 	isNotApproved = false;
 	
-	// SI LA NOTA FINAL DE CAA ES MENOR A 4
-	if (student->caaMark < 4) {
-		// LA NOTA FINAL ES LA NOTA DE CAA
+	/* If student's CAA mark is less than 4, final mark will be CAA mark and student is not approved */
+	if (student->caaMark < 4.0) {
 		student->finalMark = student->caaMark;
-		/*printf("CACA IF CAA < 4: %f\n", student->finalMark);*/
 		isNotApproved = true;
 	} else {
-		// SI LA NOTA FINAL DE PR ES MENOR A 5
-		if (student->prMark < 5) {
-			// LA NOTA FINAL ES LA NOTA DE PR
+		/* If student's PR mark is less than 5, final mark will be PR mark and student is not approved */
+		if (student->prMark < 5.0) {
 			student->finalMark = student->prMark;
-			/*printf("CACA IF PR < 5: %f\n", student->finalMark);*/
 			isNotApproved = true;
 		} else {		
-			// SI NO, LA NOTA FINAL ES LA MEDIA PONDERADA ENTRE CAA Y PR
+			/* In any other case, final mark will be the weighted average between CAA and PR */
 			student->finalMark = (student->caaMark * FINAL_CAA_WEIGHT + student->prMark * FINAL_PR_WEIGHT) / TOTAL_MARKS_WEIGHT;
-			// SI LA NOTA FINAL ES OK PERO HAY NO PRESENTADO
-			// FALTA CONDICION DE APROBADO
+			/* If student is not approved and hasn't submitted all the PR, final mark is 4 */
 			if (!isNotApproved && !allSubmittedPr(student->nPr)) {
-				// LA NOTA FINAL SERA 4
-				student->finalMark = 4;
+				student->finalMark = 4.0;
 			}
-			/*printf("CACA IF OK: %f\n", student->finalMark);*/
 		}
 	}
+	/* Student is absent when has submitted less than 3 CAA and less than 2 PR */
 	student->absent = student->nCaa < 3 && student->nPr < 2;
 }
 
@@ -193,26 +187,24 @@ void saveAndDisplayStudentsData(tStudentsTable studentsTable) {
 	int i;
 		
 	/* Open the file */
-	fileToWrite = fopen("grades.txt","w");
+	fileToWrite = fopen(GRADES_FILE,"w");
 	
-	if (fileToWrite != NULL) {
-		if (studentsTable.nStudents == 0) {
-			printf("STUDENT LIST EMPTY");
-		} else {
-			for (i = 0; i < studentsTable.nStudents; i++) {
-				student = studentsTable.students[i];
+	if (studentsTable.nStudents == 0) {
+		printf("STUDENT LIST EMPTY");
+	} else {
+		for (i = 0; i < studentsTable.nStudents; i++) {
+			student = studentsTable.students[i];
 				
-				/* Save student data to the file */
-				fprintf(fileToWrite, "%d %s %0.2f %0.2f %d %d %0.2f %d\n",
-						student.studentId,
-						student.name,
-						student.caaMark,
-						student.prMark,
-						student.nCaa,
-						student.nPr,
-						student.finalMark,
-						student.absent);
-			}
+			/* Write student data into the file */
+			fprintf(fileToWrite, "%d %s %0.2f %0.2f %d %d %0.2f %d\n",
+					student.studentId,
+					student.name,
+					student.caaMark,
+					student.prMark,
+					student.nCaa,
+					student.nPr,
+					student.finalMark,
+					student.absent);
 		}
 	}
 	/* Display student data */
@@ -226,28 +218,38 @@ void saveAndDisplayStudentsData(tStudentsTable studentsTable) {
 /* Exercise 5 */ 
 /* Action that order a student's table by mark and student id */	
 void sortDescendingByFinalMark(tStudentsTable *studentsTable) {
-	int i, j, posMin;
-	tStudent aux;
+	int i, j, posMin;	/* Iteration (i), second position (j) and minimum position (posMin) variables */
+	tStudent aux;		/* Auxiliary variable to swap students */
 	
 	/* Initialize variables */
 	i = 0;
 	
+	/* Iterate over the students table */
 	while (i < studentsTable->nStudents) {
-		posMin = i;
-		j = i + 1;
+		posMin = i;		/* posMin is the current position */
+		j = i + 1;		/* j is the next position to i */
+		
+		/* Evaluate j position */
 		while (j <= studentsTable->nStudents) {
+			/* If the student in j position has a higher mark than the student in the minimum position */
 			if (studentsTable->students[j].finalMark > studentsTable->students[posMin].finalMark) {
+				/* Update the minimum position */
 				posMin = j;
 			} else {
+				/* If the student in j position has the same mark as the student in the minimum position */
 				if (studentsTable->students[j].finalMark == studentsTable->students[posMin].finalMark) {
+					/* If the student in j position has a lower student id than the student in the minimum position */
 					if (studentsTable->students[j].studentId < studentsTable->students[posMin].studentId) {
+						/* Update the minimum position */
 						posMin = j;
 					}
 				}
 			}
+			/* Increment j position */
 			j++;
 		}
 		
+		/* If the minimum position is different from i, swap the students */
 		if (posMin != i) {
 			aux = studentsTable->students[posMin];
 			studentsTable->students[posMin] = studentsTable->students[i];
@@ -274,7 +276,7 @@ float displayApprovedStats(tStudentsTable studentsTable) {
 	for (i = 0; i < studentsTable.nStudents; i++) {
 		student = studentsTable.students[i];
 		isApproved = student.finalMark >= MIN_C_PLUS;
-		// TODO: mEJORAR CONDICION CON UN ISAPPROVED
+		
 		if (isApproved && !student.absent) {
 			approvedStudentsCount++;
 		}
@@ -290,30 +292,44 @@ float displayApprovedStats(tStudentsTable studentsTable) {
 
 /* Exercise 7 */
 /* Action that obtains students candidates to honors */
-void listStudentsWithHonors(tStudentsTable studentsTable, tStudentsTable *studentsWithHonors) {
+void listStudentsWithHonors(tStudentsTable studentsTable, tStudentsTable *studentsWithHonorsTable) {
 	int i, j;
 	
 	/* Initialize variables */
 	i = 0;
 	j = 0;
-	studentsWithHonors->nStudents = 0;
+	studentsWithHonorsTable->nStudents = 0;
 	
 	for (i = 0; i < studentsTable.nStudents; i++) {
 		if (studentsTable.students[i].finalMark >= MIN_A) {
-			studentsWithHonors->students[j] = studentsTable.students[i];
+			studentsWithHonorsTable->students[j] = studentsTable.students[i];
 			j++;
 		}
 	}
 	
-	studentsWithHonors->nStudents = j;
+	/* Update the number of students in studentsWithHonorsTable */
+	studentsWithHonorsTable->nStudents = j;
 	
-	writeStudentsData(*studentsWithHonors);
+	writeStudentsData(*studentsWithHonorsTable);
 }
 
 
 /* Exercise 8 */
 /* Function that test if a student is in honors table */
-/* ... */
+bool isEligibleForHonors(int studentId, tStudentsTable *studentsWithHonorsTable) {
+	int i;
+	bool found;
+	
+	/* Initialize variables */
+	i = 0;
+	found = false;
+
+	while(i < studentsWithHonorsTable->nStudents && !found) {
+		found = studentsWithHonorsTable->students[i].studentId == studentId;
+		i++;
+	}
+	return found;
+}
 
 
 /* Action that writes a student's ID, grade and NP registry */

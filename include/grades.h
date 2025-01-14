@@ -28,9 +28,10 @@
 #define PR3_WEIGHT  50 /* Percent weight of PR3 in PR grade */
 
 /* Constants defined for PR4 */
-#define TOTAL_MARKS_WEIGHT 100	/* Total weight for CAA or PR activities group */
-#define FINAL_CAA_WEIGHT 30		/* Final CAA weight */
-#define FINAL_PR_WEIGHT 70     /* Final PR weight */
+#define TOTAL_MARKS_WEIGHT 100		/* Total weight for CAA or PR activities group */
+#define FINAL_CAA_WEIGHT 30			/* Final CAA weight */
+#define FINAL_PR_WEIGHT 70     		/* Final PR weight */
+#define GRADES_FILE "grades.txt"	/* Name of the file to write student's data */
 
 /* User defined types */
 typedef enum {A = 1, B, C_PLUS, C_MINUS, D} tGrade;
@@ -73,5 +74,5 @@ void calculateFinalMark(tStudent *student);
 void saveAndDisplayStudentsData(tStudentsTable studentsTable);
 void sortDescendingByFinalMark(tStudentsTable *studentsTable);
 float displayApprovedStats(tStudentsTable studentsTable);
-void listStudentsWithHonors(tStudentsTable studentsTable, tStudentsTable *studentsWithHonors);
-/* ... */
+void listStudentsWithHonors(tStudentsTable studentsTable, tStudentsTable *studentsWithHonorsTable);
+bool isEligibleForHonors(int studentId, tStudentsTable *studentsWithHonorsTable);
