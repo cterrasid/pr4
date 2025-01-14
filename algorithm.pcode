@@ -40,7 +40,7 @@ type
         studentId: integer; { Student ID }
         name: string; { Student Name }
         activities: vector[NUM_ACTIVITIES] of tActivity; { Student Activities }
-        {Exercise 1}
+        { Exercise 1 }
         caaMark: real;  { Student final CAA mark }
         prMark: real;   { Student final PR mark }
         nCaa: integer;  { Student number of submitted CAA activities }
@@ -56,7 +56,7 @@ type
 
 end type
     
-{Exercise 1: 2. Read data from marks file}
+{ Exercise 1 }
 action studentsLoadDataFromFile (
     in filename: string,
     out studentsTable: tStudentsTable,
@@ -74,6 +74,7 @@ action studentsLoadDataFromFile (
       { Initialize table }
       studentsTable.nStudents := 0;
   
+      { Traversal scheme: Iterate through a file to load all the student data }
       while not isEndOfFile(fileToRead) and studentsTable.nStudents < MAX_STUDENTS do
         newStudent.studentId := readIntegerFromFile(fileToRead);
         newStudent.name := readStringFromFile(fileToRead);
@@ -82,22 +83,22 @@ action studentsLoadDataFromFile (
           newStudent.activities[i].mark := readRealFromFile(fileToRead);
           newStudent.activities[i].state := readEnumFromFile(fileToRead);
           { Assign activity name }
-           if i := 1 then
+           if i = 1 then
                newStudent.activities[i].name := CAA1;
            else
-               if i := 2 then
+               if i = 2 then
                    newStudent.activities[i].name := CAA2;
                else
-                   if i := 3 then
+                   if i = 3 then
                        newStudent.activities[i].name := CAA3;
                    else
-                       if i := 4 then
+                       if i = 4 then
                            newStudent.activities[i].name := CAA4;
                        else
-                           if i := 5 then
+                           if i = 5 then
                                newStudent.activities[i].name := PR1;
                            else
-                               if i := 6 then
+                               if i = 6 then
                                    newStudent.activities[i].name := PR2;
                                else
                                    newStudent.activities[i].name := PR3;
@@ -180,6 +181,7 @@ action calculateFinalMarkByActivityType (inout student: tStudent)
     student.nCaa := 0;
     student.nPr := 0;
     
+    { Traversal scheme: Iterate through all the student activities to process their marks }
     for i := 1 to NUM_ACTIVITIES do
         activityTypeWeight(student.activities[i].name, activityType, activityWeight);
         mark := student.activities[i].mark * activityWeight;
@@ -248,6 +250,7 @@ action saveAndDisplayStudentsData (in studentsTable: tStudentsTable)
     if studentsTable.nStudents = 0 then
         writeString(“STUDENT LIST EMPTY”);
     else
+        { Traversal scheme: Iterate through all the students to write their data into the file }
         for i := 1 to studentsTable.nStudents do
             student := studentsTable.students[i];
 
@@ -270,7 +273,7 @@ action saveAndDisplayStudentsData (in studentsTable: tStudentsTable)
 end action
 
 { Exercise 5 }
-{ Sort algorithm: Action that order a student's table by mark and student id }
+{ Action that order a student's table by mark and student id }
 action sortDescendingByFinalMark (inout studentsTable: tStudentsTable)
     var
         i, j, posMin: integer;  { Iteration (i), second position (j) and minimum position (posMin) variables }
@@ -280,7 +283,7 @@ action sortDescendingByFinalMark (inout studentsTable: tStudentsTable)
     { Initialize variables }
     i := 1;
     
-    { Iterate over the students table }
+    { Sorting scheme: Iterate through all the students to sort them by mark in descending order }
     while i < studentsTable.nStudents do
         posMin := i;    { posMin is the current position }
         j := i + 1;     { j is the next position to i }
@@ -371,7 +374,7 @@ action listStudentsWithHonors (in studentsTable: tStudentsTable, out studentsWit
 end action
 
 { Exercise 8 }
-{ Search algorithm: Check if student is eligible for honors }
+{ Check if student is eligible for honors }
 function isEligibleForHonors (studentId: integer, studentsWithHonorsTable: tStudentsTable): boolean
     var
         i: integer;
@@ -382,6 +385,7 @@ function isEligibleForHonors (studentId: integer, studentsWithHonorsTable: tStud
     i := 1;
     found := false;
 
+    { Search scheme: Search for an specific student ID in the studentsWithHonorsTable }
     while i <= studentsWithHonorsTable.nStudents and not found do
         found := studentsWithHonorsTable.students[i].studentId = studentId;
         i := i + 1;
